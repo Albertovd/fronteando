@@ -5,7 +5,9 @@ import { Card, Form, Button, Container } from 'react-bootstrap';
 import { FormSelect } from 'components/elements/form-select/FormSelect';
 import ReactQuillEditor from 'components/elements/editor/ReactQuillEditor';
 import Icon from '@mdi/react';
-import { mdiArrowRight } from '@mdi/js';
+import { mdiArrowRight, mdiUpload } from '@mdi/js';
+import GKTagsInput from 'components/elements/tags/GKTagsInput';
+
 
 const BasicInformation = (props) => {
 	const { next } = props;
@@ -89,12 +91,34 @@ const BasicInformation = (props) => {
 							Un resumen pequeño del curso.
 						</Form.Text>
 					</Form.Group>
+					{/* Course cover image */}
+					<Form.Label>Portada del curso</Form.Label>
+					<Form.Group className="mb-1 input-group">
+						<Form.Control
+							id="inputfavicon"
+							type="file"
+							className="form-control"
+						/>
+						<Form.Text className="text-muted">
+							Sube la imagen de tu curso aquí.
+							Debe cumplir con nuestros estándares de calidad de imagen para ser aceptada.
+							Pautas importantes: 750x440 píxeles; .jpg, .jpeg, .gif o .png. sin texto en la imagen.
+						</Form.Text>
+					</Form.Group>
+					<Form.Group className="mb-1">
+						<Form.Label>
+							Requisitos
+						</Form.Label>
+						<Form.Text>
+							<GKTagsInput />
+						</Form.Text>
+					</Form.Group>
 				</Card.Body>
 			</Card>
 			{/* Button */}
 			<Container className='text-end'>
 				<Button onClick={next} style={{ backgroundColor: "#042b61", borderColor: "white", color: "white" }}>
-					Siguiente <Icon path={mdiArrowRight} size={0.8} />
+					Mandar a revisión <Icon path={mdiUpload} size={0.8} />
 				</Button>
 			</Container>
 
