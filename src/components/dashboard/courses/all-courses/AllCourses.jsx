@@ -21,16 +21,8 @@ const AllCourses = () => {
 					<div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
 						<div className="mb-3 mb-md-0">
 							<h1 className="mb-1 h2 fw-bold">Todos los cursos</h1>
-							<Breadcrumb>
-								<Breadcrumb.Item href="#">Menu</Breadcrumb.Item>
-								<Breadcrumb.Item href="#">Cursos</Breadcrumb.Item>
-								<Breadcrumb.Item active>Todos</Breadcrumb.Item>
-							</Breadcrumb>
 						</div>
 						<div>
-							<Link to="#" className="btn btn-primary">
-								Agregar nuevo curso
-							</Link>
 						</div>
 					</div>
 				</Col>
@@ -43,17 +35,7 @@ const AllCourses = () => {
 								<Nav className="nav-lb-tab">
 									<Nav.Item>
 										<Nav.Link eventKey="all" className="mb-sm-3 mb-md-0">
-											Todos
-										</Nav.Link>
-									</Nav.Item>
-									<Nav.Item>
-										<Nav.Link eventKey="approved" className="mb-sm-3 mb-md-0">
-											Aprobados
-										</Nav.Link>
-									</Nav.Item>
-									<Nav.Item>
-										<Nav.Link eventKey="pending" className="mb-sm-3 mb-md-0">
-											Pendientes
+											Listado de cursos
 										</Nav.Link>
 									</Nav.Item>
 								</Nav>

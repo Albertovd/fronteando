@@ -1,39 +1,59 @@
-// import node module libraries
-import React, { Fragment } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Row, Col, Container, Nav, Navbar } from 'react-bootstrap';
+import React, { Fragment } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Row, Col, Container, Nav, Navbar } from "react-bootstrap";
 
 // import custom components
-import ProfileCover from 'components/marketing/common/headers/ProfileCover';
+import ProfileCover from "components/marketing/common/headers/ProfileCover";
 
 // import routes file
 import {
 	DashboardMenu,
-	AccountSettingsMenu
-} from 'routes/marketing/InstructorDashboard';
+	AccountSettingsMenu,
+} from "routes/marketing/InstructorDashboard";
 
 // import media files
-import Avatar1 from 'assets/images/avatar/avatar-1.jpg';
+import Avatar1 from "assets/images/avatar/avatar-1.jpg";
 
 const ProfileLayout = (props) => {
+	const userDataString = localStorage.getItem("user");
+	const userData = userDataString ? JSON.parse(userDataString) : {};
+	const avatarSrc = userData.avatar
+		? `data:image/jpeg;base64,${userData.avatar}`
+		: Avatar1;
+	const utez_community = localStorage.getItem("utez_community");
 	const location = useLocation();
+	console.log("utez_community:", utez_community);
+	const handleLogout = () => {
+		console.log("Logging out...");
+		localStorage.removeItem('token');
+		window.location.href = '/';
+	};
+
 
 	const dashboardData = {
-		avatar: Avatar1,
-		name: 'Jenny Wilson',
-		username: '@Jennywilson',
-		linkname: 'Crear curso',
-		link: '/marketing/instructor/add-new-course/'
+		avatar: avatarSrc,
+		name: userData.name || "Nombre de Usuario",
+		username: userData.username || "correo@ejemplo.com",
+		linkname: "Crear curso",
+		link: "/marketing/instructor/add-new-course/",
 	};
+
+	const showDashboardMenu =
+		utez_community === "administrativo" || utez_community === "profesor";
+	const showSettingsMenu =
+		utez_community === "estudiante" ||
+		utez_community === "egresado" ||
+		utez_community === "publico" ||
+		utez_community === "administrativo" ||
+		utez_community === "profesor";
 
 	return (
 		<Fragment>
 			<section className="pt-5 pb-5">
 				<Container>
-					{/* User info */}
 					<ProfileCover dashboardData={dashboardData} />
+					
 
-					{/* Content */}
 					<Row className="mt-0 mt-md-4">
 						<Col lg={3} md={4} sm={12}>
 							<Navbar
@@ -65,40 +85,49 @@ const ProfileLayout = (props) => {
 
 								<Navbar.Collapse id="basic-navbar-nav">
 									<Nav className="me-auto flex-column" as="ul">
-										<Nav.Item className="navbar-header" as="li">
-											Dashboard
-										</Nav.Item>
-										{DashboardMenu.map((item, index) => (
-											<Nav.Item
-												as="li"
-												key={index}
-												className={`${
-													item.link === location.pathname ? 'active' : ''
-												}`}
-											>
-												<Link className="nav-link" to={item.link}>
-													<i className={`fe fe-${item.icon} nav-icon`}></i>
-													{item.title}
-												</Link>
-											</Nav.Item>
-										))}
-										<Nav.Item className="navbar-header mt-4" as="li">
-											Configuración
-										</Nav.Item>
-										{AccountSettingsMenu.map((item, index) => (
-											<Nav.Item
-												as="li"
-												key={index}
-												className={`${
-													item.link === location.pathname ? 'active' : ''
-												}`}
-											>
-												<Link className="nav-link" to={item.link}>
-													<i className={`fe fe-${item.icon} nav-icon`}></i>
-													{item.title}
-												</Link>
-											</Nav.Item>
-										))}
+										{showDashboardMenu && (
+											<>
+												<Nav.Item className="navbar-header" as="li">
+													Dashboard
+												</Nav.Item>
+												{DashboardMenu.map((item, index) => (
+													<Nav.Item
+														as="li"
+														key={index}
+														className={`${item.link === location.pathname ? "active" : ""}`}
+													>
+														<Link className="nav-link" to={item.link}>
+															<i className={`fe fe-${item.icon} nav-icon`}></i>
+															{item.title}
+														</Link>
+													</Nav.Item>
+												))}
+											</>
+										)}
+										{showSettingsMenu && (
+											<>
+												<Nav.Item className="navbar-header mt-4" as="li">
+													Configuración
+												</Nav.Item>
+												{AccountSettingsMenu.map((item, index) => (
+													<Nav.Item
+														as="li"
+														key={index}
+														className={`${item.link === location.pathname ? "active" : ""}`}>
+														{item.action ? (
+															<Nav.Link as="button" className="nav-link" onClick={item.action}>
+																<i className={`fe fe-${item.icon} nav-icon`}></i> {item.title}
+															</Nav.Link>
+														) : (
+															<Link className="nav-link" to={item.link}>
+																<i className={`fe fe-${item.icon} nav-icon`}></i> {item.title}
+															</Link>
+														)}
+													</Nav.Item>
+												))}
+
+											</>
+										)}
 									</Nav>
 								</Navbar.Collapse>
 							</Navbar>
@@ -113,4 +142,5 @@ const ProfileLayout = (props) => {
 		</Fragment>
 	);
 };
+
 export default ProfileLayout;
