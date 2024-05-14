@@ -1,25 +1,13 @@
 // import node module libraries
-import React from 'react';
 import { Col, Row, Card, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
-// import custom components
-import { FlatPickr } from 'components/elements/flat-pickr/FlatPickr';
-import ApexCharts from 'components/elements/charts/ApexCharts';
 import StatRightIcon from 'components/dashboard/common/stats/StatRightIcon';
 
 // import sub components
 import PopularInstructor from './PopularInstructor';
 import RecentCourses from './RecentCourses';
-import Activity from './Activity';
-
-// import data files
-import {
-	TrafficChartSeries,
-	TrafficChartOptions,
-	EarningsChartSeries,
-	EarningsChartOptions
-} from 'data/charts/ChartData';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 // The forwardRef is important!!
 // Dropdown needs access to the DOM node in order to position the Menu
@@ -62,6 +50,50 @@ const ChartActionMenu = () => {
 };
 
 const Overview = () => {
+	const [ventas, setVentas] = useState('Cargando...');
+    const [totalCursos, setTotalCursos] = useState('Cargando...');
+    const [totalEstudiantes, setTotalEstudiantes] = useState('Cargando...');
+    const [totalInstructores, setTotalInstructores] = useState('Cargando...');
+
+	// Función para cargar los datos
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Ventas
+                const responseVentas = await axios.get('http://localhost:3001/total-sales');
+                setVentas(`$${responseVentas.data.totalVentas}`);
+
+                // Cursos
+                const responseCursos = await axios.get('http://localhost:3001/total-courses');
+                setTotalCursos(responseCursos.data.totalCursos);
+
+                // Comunidad (Estudiantes e Instructores)
+                const responseComunidad = await axios.get('http://localhost:3001/community-count');
+                let estudiantes = 0;
+                let instructores = 0;
+                responseComunidad.data.forEach(item => {
+                    if (['estudiante', 'egresado', 'publico'].includes(item.utez_community)) {
+                        estudiantes += item.count;
+                    } else if (item.utez_community === 'profesor') {
+                        instructores += item.count;
+                    }
+                });
+                setTotalEstudiantes(estudiantes);
+                setTotalInstructores(instructores);
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+                // Manejo simple del error, puedes personalizarlo
+                setVentas('Error al cargar');
+                setTotalCursos('Error al cargar');
+                setTotalEstudiantes('Error al cargar');
+                setTotalInstructores('Error al cargar');
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
 	return (
 		<div>
 			<Row>
@@ -74,68 +106,56 @@ const Overview = () => {
 				</Col>
 			</Row>
 			<Row>
-				<Col xl={3} lg={6} md={12} sm={12}>
-					<StatRightIcon
-						title="Ventas"
-						value="$10,800"
-						summary="Numero de ventas"
-						summaryValue="+20.9$"
-						summaryIcon="up"
-						showSummaryIcon
-						iconName="shopping-bag"
-						iconColorVariant="primary"
-						classValue="mb-4"
-					/>
-				</Col>
+                <Col xl={3} lg={6} md={12} sm={12}>
+                    <StatRightIcon
+                        title="Ventas"
+                        value={ventas}
+                        showSummaryIcon
+                        iconName="shopping-bag"
+                        iconColorVariant="success"
+                        classValue="mb-4"
+                    />
+                </Col>
 
-				<Col xl={3} lg={6} md={12} sm={12}>
-					<StatRightIcon
-						title="Cursos"
-						value="15"
-						summary="Pendientes de aprobar"
-						summaryValue="120+"
-						summaryIcon="down"
-						iconName="book-open"
-						iconColorVariant="primary"
-						classValue="mb-4"
-					/>
-				</Col>
+                <Col xl={3} lg={6} md={12} sm={12}>
+                    <StatRightIcon
+                        title="Cursos"
+                        value={totalCursos.toString()}
+                        iconName="book-open"
+                        iconColorVariant="success"
+                        classValue="mb-4"
+                    />
+                </Col>
 
-				<Col xl={3} lg={6} md={12} sm={12}>
-					<StatRightIcon
-						title="Estudiantes"
-						value="1,400"
-						summary="Estudiantes"
-						summaryValue="+1200"
-						summaryIcon="up"
-						showSummaryIcon
-						iconName="users"
-						iconColorVariant="primary"
-						classValue="mb-4"
-					/>
-				</Col>
+                <Col xl={3} lg={6} md={12} sm={12}>
+                    <StatRightIcon
+                        title="Estudiantes"
+                        value={totalEstudiantes.toString()}
+                        showSummaryIcon
+                        iconName="users"
+                        iconColorVariant="success"
+                        classValue="mb-4"
+                    />
+                </Col>
 
-				<Col xl={3} lg={6} md={12} sm={12}>
-					<StatRightIcon
-						title="Instructores"
-						value="78"
-						summary="Instructores"
-						summaryValue="+20"
-						summaryIcon="up"
-						showSummaryIcon
-						iconName="user-check"
-						iconColorVariant="primary"
-						classValue="mb-4"
-					/>
-				</Col>
-			</Row>
+                <Col xl={3} lg={6} md={12} sm={12}>
+                    <StatRightIcon
+                        title="Instructores"
+                        value={totalInstructores.toString()}
+                        showSummaryIcon
+                        iconName="user-check"
+                        iconColorVariant="success"
+                        classValue="mb-4"
+                    />
+                </Col>
+            </Row>
 
 			<Row>
 				<Col xl={4} lg={6} md={12} className="mb-4">
-					<PopularInstructor title="Instructores regustrados" />
+					<PopularInstructor title="Instructores registrados" />
 				</Col>
 				<Col xl={4} lg={6} md={12} className="mb-4">
-					<RecentCourses title="Cursos creados" />
+					<RecentCourses title="Cursos creados recientemente" />
 				</Col>
 			</Row>
 		</div>
