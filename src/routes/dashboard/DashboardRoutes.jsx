@@ -25,9 +25,6 @@ import { v4 as uuid } from 'uuid';
  *
  */
 
-// import MDI icons
-import Icon from '@mdi/react';
-import { mdiTrello, mdiCalendar } from '@mdi/js';
 
 export const DashboardMenu = [
 	{
@@ -50,7 +47,6 @@ export const DashboardMenu = [
 				link: '/courses/courses-category',
 				name: 'Categoria de cursos'
 			},
-			{ id: uuid(), link: '/courses/category-single', name: 'Categorias especificas' }
 		]
 	},
 	{
@@ -60,16 +56,6 @@ export const DashboardMenu = [
 		children: [
 			{ id: uuid(), link: '/user/instructor', name: 'Instructores' },
 			{ id: uuid(), link: '/user/students', name: 'Estudiantes' }
-		]
-	},
-
-	{
-		id: uuid(),
-		title: 'Gestion de eventos',
-		icon: 'book-open',
-		children: [
-			{ id: uuid(), link: '/cms/all-posts', name: 'Listado de eventos' },
-			{ id: uuid(), link: '/cms/category', name: 'Tipos de eventos' }
 		]
 	},
 ];
